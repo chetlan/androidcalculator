@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
     private val displayDefault = "CHET'S CALCULATOR"
     private var mem:Array<String> = arrayOf("none", "none")
 
-    // sentinel indexes for mem
+    // sentinel indexes for mem array
     private var NUMBER = 1
     private var OPERATION = 0
 
@@ -22,7 +22,23 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
 
         when (p0){
             buttonAdd, buttonSub, buttonMultiply, buttonDivide -> opPress(p0, mem)
-            buttonClear -> display.text = displayDefault
+            buttonClear -> {
+                display.text = displayDefault
+                mem[OPERATION] = "none"
+                mem[NUMBER] = "none"
+            }
+
+            buttonEquals -> {
+
+                //maybe extraneous
+                if (mem[NUMBER] == "none" || mem[OPERATION] == "none" || display.text == displayDefault){
+                    return
+                }
+                else{
+                    calc(mem[OPERATION], mem[NUMBER] as Int, display.text as Int)
+                }
+
+            }
 
             // ALL OTHER BUTTONS I ADD GO HERE, LIKE DECIMALS
 
@@ -33,19 +49,29 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
 
 
     private fun numPress(number:String){
-        //for default
-        //Toast.makeText(this, (display.text == "CHET'S CALCULATOR") as CharSequence, Toast.LENGTH_SHORT).show()
+
         if (display.text == displayDefault){
             display.text = number
         }
 
-        //for when something was already pressed
+        //for when something was already pressed, needs tidying
         else{
-            display.append(number)
+
+            //if an operation was just pressed
+            if (mem[OPERATION] != "none"){
+                //mem[NUMBER] =  display.text as String
+                display.text = number
+            }
+
+            //if not
+            else {
+                display.append(number)
+            }
+
         }
     }
 
-    private fun calc(operation:CharSequence, num1 :Int, num2: Int){
+    private fun calc(operation:String, num1 :Int, num2: Int){
         when (operation){
             "+" -> display.text = (num1 + num2) as CharSequence
             "-" -> display.text = (num1 - num2) as CharSequence
@@ -57,21 +83,31 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
     //When +,-,*, or / buttons are pressed
     private fun opPress(button: Button, mem: Array<String>){
 
+        val operation = button.text
+
         //when no numbers have been pressed before
         if (display.text == displayDefault){
             return
         }
 
-
-        //if another was done before
-        if(mem[OPERATION] != "none"){
-            calc(mem[OPERATION], mem[NUMBER] as Int, display.text as Int)
-            mem[OPERATION] = "none"
+        if (mem[OPERATION] == "none"){
+            mem[NUMBER] = display.text as String
+            mem[OPERATION] = operation as String
         }
 
+
+        //if another was done before
+        else{
+            calc(mem[OPERATION], mem[NUMBER] as Int, display.text as Int)
+            mem[OPERATION] = "none"
+            mem[NUMBER] = "none"
+        }
+
+        /*
         mem[NUMBER] = display.text as String
         mem[OPERATION] = button.text as String
-        display.text = ""
+        //display.text = ""
+        */
 
     }
 
