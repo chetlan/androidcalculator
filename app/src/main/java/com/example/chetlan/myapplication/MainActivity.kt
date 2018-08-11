@@ -1,16 +1,18 @@
 package com.example.chetlan.myapplication
 
-import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlin.text.*
+
+
 
 class MainActivity : AppCompatActivity(), View.OnClickListener{
     private val displayDefault = "CHET'S CALCULATOR"
     private var mem:Array<String> = arrayOf("none", "none")
+    private var fin = false
 
     // sentinel indexes for mem array
     private var NUMBER = 1
@@ -18,7 +20,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
 
     override fun onClick(p0: View?) {
 
-        val b = p0 as Button
+       val b = p0 as Button
 
         when (p0){
             buttonAdd, buttonSub, buttonMultiply, buttonDivide -> opPress(p0, mem)
@@ -35,12 +37,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
                     return
                 }
                 else{
-                    calc(mem[OPERATION], mem[NUMBER] as Int, display.text as Int)
+                    calc(mem[OPERATION], mem[NUMBER].toInt(), (display.text as String).toInt())
+                    //mem[OPERATION] = "none"
+                    //mem[NUMBER] = "none"
                 }
 
             }
 
-            // ALL OTHER BUTTONS I ADD GO HERE, LIKE DECIMALS
+            // ALL OTHER BUTTONS I ADD GO HERE - DECIMAL, etc.
 
             //numbers
             else -> numPress(b.text as String)
@@ -50,6 +54,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
 
     private fun numPress(number:String){
 
+        fin = false
         if (display.text == displayDefault){
             display.text = number
         }
@@ -73,10 +78,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
 
     private fun calc(operation:String, num1 :Int, num2: Int){
         when (operation){
-            "+" -> display.text = (num1 + num2) as CharSequence
-            "-" -> display.text = (num1 - num2) as CharSequence
-            "*" -> display.text = (num1 * num2) as CharSequence
-            "/" -> display.text = (num1 / num2) as CharSequence
+            "+" -> display.text = (num1 + num2).toString()
+            "-" -> display.text = (num1 - num2).toString()
+            "*" -> display.text = (num1 * num2).toString()
+            "/" -> display.text = (num1 / num2).toString()
         }
     }
 
@@ -90,24 +95,23 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
             return
         }
 
+        else if (fin){
+            mem[OPERATION] = operation as String
+        }
+
         if (mem[OPERATION] == "none"){
             mem[NUMBER] = display.text as String
             mem[OPERATION] = operation as String
         }
 
-
         //if another was done before
         else{
-            calc(mem[OPERATION], mem[NUMBER] as Int, display.text as Int)
+            calc(mem[OPERATION], Integer.parseInt(mem[NUMBER]), Integer.parseInt(display.text as String))
             mem[OPERATION] = "none"
             mem[NUMBER] = "none"
+
         }
 
-        /*
-        mem[NUMBER] = display.text as String
-        mem[OPERATION] = button.text as String
-        //display.text = ""
-        */
 
     }
 
